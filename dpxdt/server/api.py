@@ -101,7 +101,7 @@ from dpxdt.server import models
 from dpxdt.server import signals
 from dpxdt.server import work_queue
 from dpxdt.server import utils
-
+from dpxdt.server import slack
 
 @app.route('/api/create_release', methods=['POST'])
 @auth.build_api_access_required
@@ -191,6 +191,7 @@ def _check_release_done_processing(release):
     @utils.after_this_request
     def send_notification_email(response):
         emails.send_ready_for_review(build_id, release_name, release_number)
+        slack.slack_ready_for_review(build_id, release_name, release_number)
 
     release.status = models.Release.REVIEWING
     db.session.add(release)
