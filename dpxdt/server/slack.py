@@ -15,27 +15,35 @@
 
 """Implements email sending for the API server and frontend."""
 
+import json
 import logging
+import urllib
 import urllib2
 
 # Local libraries
+import flask
+import requests
 from flask import url_for
 from flask.ext.login import current_user
 
 # Local modules
 from . import app
-from dpxdt import server
 from dpxdt.server import models
 from dpxdt.server import operations
 from dpxdt.server import utils
 
 
-@utils.ignore_exceptions
-@app.route('/email/ready_for_review/<int:build_id>/'
-           '<string:release_name>/<int:release_number>')
+#@utils.ignore_exceptions
+#@app.route('/email/ready_for_review/<int:build_id>/'
+#           '<string:release_name>/<int:release_number>')
 
+def test():
+    slack_ready_for_review(1, 'console_app_test_2', 15)
+    return
 
 def slack_ready_for_review(build_id, release_name, release_number):
+
+
     """Sends a message to slack that build is ready for review"""
     build = models.Build.query.get(build_id)
 
@@ -57,27 +65,27 @@ def slack_ready_for_review(build_id, release_name, release_number):
             build.id, release.name, release.number)
         return
 
-    """curl -X POST --data-urlencode 'payload={"channel": "@barendb",
-          "username": "webhookbot",
-          "text": "This is posted to #general and comes from a bot named webhookbot.",
-          "icon_emoji": ":ghost:"}'
-          https://pushpay.slack.com/services/hooks/incoming-webhook?token=%s
-    """
 
+    results = 'Total runs: %d\nRuns successful: %d\nRuns failed: %d' % (stats_dict['runs_total'], stats_dict['runs_successful'], stats_dict['runs_failed'])
 
-    data = {
+    color = '#D00000'
+
+    if stats_dict['runs_failed'] == 0:
+      color = '#0D0000'
+
+    slackJson = {
       'channel' : '@barendb',
       'username' : 'webhookbot',
-      'text' : 'PDiff %s: %s - Ready for review'  % (build.name, release.name),
+      'text' : 'Release %s run %s | Ready for review'  % (release.name, release_number),
       'icon_emoji' : ':pdiff:',
       'attachments' : [{
-          'fallback' : 'New open task [Urgent]: <%s|Test out Slack message attachments>' % url_for('view_release', id=build.id, name=release.name, number=release.number, _external=True),
-          'pretext' : 'New open task [Urgent]: <%s|Test out Slack message attachments>' %url_for('view_release', id=build.id, name=release.name, number=release.number, _external=True),
-          'color' : '#D00000',
+          'fallback' : '<%s|Review PDiff results>' % 'http://test.com',
+          'pretext' : '<%s|Review PDiff results>' % 'http://test.com',
+          'color' : color,
           'fields' : [
             {
-              'title' : 'Notes',
-              'value' : 'This is much easier than I thought it would be.',
+              'title' : 'Results',
+              'value' : results,
               'short' : 'false'
             }
           ]
@@ -85,10 +93,7 @@ def slack_ready_for_review(build_id, release_name, release_number):
       ]
     }
 
-
-    req = urllib2.Request(server.app.config['SLACK_WEBHOOK'], 'payload=%s' % urllib2.urlencode(data))
-    response = urllib2.urlopen(req)
-    #result = response.read()
+    requests.post(app.config['SLACK_WEBHOOK'], data=json.dumps(slackJson))
     return
 
 
