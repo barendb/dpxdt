@@ -68,19 +68,19 @@ def slack_ready_for_review(build_id, release_name, release_number):
 
     results = 'Total runs: %d\nRuns successful: %d\nRuns failed: %d' % (stats_dict['runs_total'], stats_dict['runs_successful'], stats_dict['runs_failed'])
 
-    color = '#D00000'
+    color = '#FF321D'
 
     if stats_dict['runs_failed'] == 0:
-      color = '#0D0000'
+      color = '#44A814'
 
     slackJson = {
-      'channel' : '@barendb',
-      'username' : 'webhookbot',
+      'channel' : app.config['SLACK_CHANNEL'],
+      'username' : 'Differentiator',
       'text' : 'Release %s run %s | Ready for review'  % (release.name, release_number),
       'icon_emoji' : ':pdiff:',
       'attachments' : [{
-          'fallback' : '<%s|Review PDiff results>' % 'http://test.com',
-          'pretext' : '<%s|Review PDiff results>' % 'http://test.com',
+          'fallback' : '<%s/release?number=%d&id=%d&name=%s|Review PDiff results>' %  (app.config['SERVER_URL'], release_number, build_id, release_name),
+          'pretext' : '<%s/release?number=%d&id=%d&name=%s|Review PDiff results>' %  (app.config['SERVER_URL'], release_number, build_id, release_name),
           'color' : color,
           'fields' : [
             {
