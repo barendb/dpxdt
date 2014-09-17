@@ -7,13 +7,13 @@ source common.sh
     --phantomjs_binary=$PHANTOMJS_BINARY \
     --phantomjs_script=$CAPTURE_SCRIPT \
     --phantomjs_timeout=20 \
-    --release_server_prefix=http://localhost:5000/api \
-    --queue_server_prefix=http://localhost:5000/api/work_queue \
+    --release_server_prefix=http://localhost:8080/api \
+    --queue_server_prefix=http://localhost:8080/api/work_queue \
     --queue_idle_poll_seconds=10 \
     --queue_busy_poll_seconds=10 \
     --pdiff_timeout=20 \
     --reload_code \
-    --port=5000 \
+    --port=8080 \
     --verbose \
     --ignore_auth \
     $@
