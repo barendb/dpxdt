@@ -133,6 +133,9 @@ def login_auth():
     logging.debug('Result user info dict: %r', result_dict)
     email_address = result_dict['email']
 
+    if email_address.find(app.config['ALLOWED_DOMAIN']) < 0:
+        abort(flask.Response(('Only %s domain allowed. Sorry!' % app.config['ALLOWED_DOMAIN']), 403))
+
     if not result_dict['verified_email']:
         abort(flask.Response('Your email address must be verified', 403))
 

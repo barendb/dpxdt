@@ -15,5 +15,4 @@ source common.sh
     --reload_code \
     --port=8080 \
     --verbose \
-    --ignore_auth \
     $@

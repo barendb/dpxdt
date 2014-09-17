@@ -43,3 +43,5 @@ MAIL_USE_APPENGINE = False
 SLACK_WEBHOOK = 'https://pushpay.slack.com/services/hooks/incoming-webhook?token=uO0ZXqbMB5LZOtZ8yWTtTzeJ'
 SLACK_CHANNEL = '#the_engine_room'
 SERVER_URL = 'http://babbage.pushpay.io:8080'
+
+ALLOWED_DOMAIN = 'pushpay.com'
