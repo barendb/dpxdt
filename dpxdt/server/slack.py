@@ -75,7 +75,7 @@ def slack_ready_for_review(build_id, release_name, release_number):
 
     slackJson = {
       'channel' : app.config['SLACK_CHANNEL'],
-      'username' : 'Differentiator',
+      'username' : 'Babbage',
       'text' : 'Release %s run %s | Ready for review'  % (release.name, release_number),
       'icon_emoji' : ':pdiff:',
       'attachments' : [{
@@ -95,37 +95,3 @@ def slack_ready_for_review(build_id, release_name, release_number):
 
     requests.post(app.config['SLACK_WEBHOOK'], data=json.dumps(slackJson))
     return
-
-
-
-    """
-    email_body = render_template(
-        'email_ready_for_review.html',
-        build=build,
-        release=release,
-        run_list=run_list,
-        stats_dict=stats_dict)
-
-    recipients = []
-    if build.email_alias:
-        recipients.append(build.email_alias)
-    else:
-        for user in build.owners:
-            recipients.append(user.email_address)
-
-    if not recipients:
-        logging.debug(
-            'Not sending ready for review email because there are no '
-            'recipients. build_id=%r, release_name=%r, release_number=%d',
-            build.id, release.name, release.number)
-        return
-
-    message = Message(title, recipients=recipients)
-    message.html = email_body
-
-    logging.info('Sending ready for review email for build_id=%r, '
-                 'release_name=%r, release_number=%d to %r',
-                 build.id, release.name, release.number, recipients)
-
-    return render_or_send(send_ready_for_review, message)
-    """
