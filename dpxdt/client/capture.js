@@ -77,11 +77,7 @@ if (config.cookies) {
     });
 }
 
-if (config.resourceTimeoutMs) {
-    page.settings.resourceTimeout = 10000;
-} else {
-    page.settings.resourceTimeout = config.resourceTimeoutMs;
-}
+page.settings.resourceTimeout = config.resourceTimeoutMs || 10000;
 
 
 // Do not load Google Analytics URLs. We don't want to pollute stats.
@@ -189,7 +185,16 @@ page.onInitialized = function() {
 
 // Dumps out any error logs.
 page.onError = function(msg, trace) {
-    console.log('page.onError', msg, trace);
+    var msgStack = [msg];
+    if (trace && trace.length) {
+        trace.forEach(function(t) {
+            msgStack.push(
+                ' -> ' + (t.file || t.sourceURL) + ': ' + t.line +
+                (t.function ? ' (in function ' + t.function + ')' : ''));
+        });
+    }
+
+    console.log('page.onError', msgStack.join('\n'));
 };
 
 
